@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60dfa695575fdd94696a39f7d6f8bda4, type: 3}
   m_Name: GeneralConfig
   m_EditorClassIdentifier: Assembly-CSharp::GeneralConfig
+  minSwipeLenght: 250
   startLevel: 1
   startCells: 0000000003000000070000000300000009000000

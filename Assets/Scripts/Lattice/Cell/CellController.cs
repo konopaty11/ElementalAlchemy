@@ -5,9 +5,9 @@ using UnityEngine.UI;
 public class CellController : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] TextMeshProUGUI levelText;
-    [SerializeField] Image icon;
-    [SerializeField] Image background;
+    [SerializeField] TextMeshPro levelText;
+    [SerializeField] SpriteRenderer icon;
+    [SerializeField] SpriteRenderer background;
 
     [Header("Configs")]
     [SerializeField] RomanArabicNumberConverter _numberConverter;
