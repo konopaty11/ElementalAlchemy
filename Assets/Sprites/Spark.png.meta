@@ -1,37 +1,40 @@
 fileFormatVersion: 2
-guid: 3efb90ff216f96947945d66276d81554
+guid: d9cc35ab5a8a79d4f8dfbca61bef90ec
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3791626967654746055
-    second: MountingArea_0
+      213: 4641428447314951278
+    second: Spark_0
   - first:
-      213: 2871171899441639828
-    second: MountingArea_1
+      213: 8225839548581295586
+    second: Spark_1
   - first:
-      213: -1973235551995539985
-    second: MountingArea_2
+      213: 7946630753430100853
+    second: Spark_2
   - first:
-      213: 6543194386218980905
-    second: MountingArea_3
+      213: -4075050256211803965
+    second: Spark_3
   - first:
-      213: -8245325735062209527
-    second: MountingArea_4
+      213: 5687185836704332878
+    second: Spark_4
   - first:
-      213: -8602362240451502025
-    second: MountingArea_5
+      213: 7777962816033420669
+    second: Spark_5
   - first:
-      213: -1278304787267180390
-    second: MountingArea_6
+      213: 1446453873234536529
+    second: Spark_6
   - first:
-      213: -4121806084792404467
-    second: MountingArea_7
+      213: -7667974323161614391
+    second: Spark_7
   - first:
-      213: 3811727834225610022
-    second: MountingArea_8
+      213: 3537976076303495957
+    second: Spark_8
   - first:
-      213: 8069595367119022210
-    second: MountingArea_9
+      213: -1852428865396331642
+    second: Spark_9
+  - first:
+      213: -5015654286854713379
+    second: Spark_10
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,12 +76,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 150
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -102,7 +105,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -140,199 +143,243 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MountingArea_0
+      name: Spark_0
       rect:
         serializedVersion: 2
-        x: 125
-        y: 700
-        width: 156
-        height: 229
+        x: 255
+        y: 336
+        width: 12
+        height: 14
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 938b520ac5f616bc0800000000000000
-      internalID: -3791626967654746055
+      spriteID: e6cb99cd49aa96040800000000000000
+      internalID: 4641428447314951278
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_1
+      name: Spark_1
       rect:
         serializedVersion: 2
-        x: 426
-        y: 700
-        width: 173
-        height: 226
+        x: 40
+        y: 43
+        width: 285
+        height: 267
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4917d4361a378d720800000000000000
-      internalID: 2871171899441639828
+      spriteID: 2e53c80bc7d082270800000000000000
+      internalID: 8225839548581295586
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_2
+      name: Spark_2
       rect:
         serializedVersion: 2
-        x: 712
-        y: 713
-        width: 214
-        height: 198
+        x: 126
+        y: 296
+        width: 25
+        height: 25
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fed422958b8ad94e0800000000000000
-      internalID: -1973235551995539985
+      spriteID: 57b5563319a184e60800000000000000
+      internalID: 7946630753430100853
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_3
+      name: Spark_3
       rect:
         serializedVersion: 2
-        x: 95
-        y: 399
-        width: 216
-        height: 208
+        x: 23
+        y: 275
+        width: 14
+        height: 13
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 92699ee70a81eca50800000000000000
-      internalID: 6543194386218980905
+      spriteID: 3c081ace1638277c0800000000000000
+      internalID: -4075050256211803965
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_4
+      name: Spark_4
       rect:
         serializedVersion: 2
-        x: 447
-        y: 395
-        width: 139
-        height: 212
+        x: 283
+        y: 190
+        width: 46
+        height: 22
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90cfa38fde7b29d80800000000000000
-      internalID: -8245325735062209527
+      spriteID: e4cf460f261fcee40800000000000000
+      internalID: 5687185836704332878
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_5
+      name: Spark_5
       rect:
         serializedVersion: 2
-        x: 704
-        y: 397
-        width: 226
-        height: 210
+        x: 333
+        y: 210
+        width: 15
+        height: 10
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 730a7ac9e154e9880800000000000000
-      internalID: -8602362240451502025
+      spriteID: d757ed5c8ffd0fb60800000000000000
+      internalID: 7777962816033420669
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_7
+      name: Spark_6
       rect:
         serializedVersion: 2
-        x: 96
-        y: 103
-        width: 218
-        height: 196
+        x: 3
+        y: 89
+        width: 19
+        height: 13
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d06b7e244376cc6c0800000000000000
-      internalID: -4121806084792404467
+      spriteID: 158e1225226d21410800000000000000
+      internalID: 1446453873234536529
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_8
+      name: Spark_7
       rect:
         serializedVersion: 2
-        x: 388
-        y: 103
-        width: 247
-        height: 191
+        x: 60
+        y: 26
+        width: 29
+        height: 29
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 62d8c73154af5e430800000000000000
-      internalID: 3811727834225610022
+      spriteID: 9c7b221daf1e59590800000000000000
+      internalID: -7667974323161614391
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MountingArea_9
+      name: Spark_8
       rect:
         serializedVersion: 2
-        x: 722
-        y: 96
-        width: 205
-        height: 210
+        x: 176
+        y: 36
+        width: 12
+        height: 47
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 288644a5b36fcff60800000000000000
-      internalID: 8069595367119022210
+      spriteID: 51376e31f7a691130800000000000000
+      internalID: 3537976076303495957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spark_9
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 38
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68b2f52f2c9da46e0800000000000000
+      internalID: -1852428865396331642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spark_10
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 0
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddf0cdb0001d46ab0800000000000000
+      internalID: -5015654286854713379
       vertices: []
       indices: 
       edges: []
@@ -341,7 +388,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fd200d7f4f59ba041b47081f2fd1a4e6
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -351,16 +398,17 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MountingArea_0: -3791626967654746055
-      MountingArea_1: 2871171899441639828
-      MountingArea_2: -1973235551995539985
-      MountingArea_3: 6543194386218980905
-      MountingArea_4: -8245325735062209527
-      MountingArea_5: -8602362240451502025
-      MountingArea_6: -1278304787267180390
-      MountingArea_7: -4121806084792404467
-      MountingArea_8: 3811727834225610022
-      MountingArea_9: 8069595367119022210
+      Spark_0: 4641428447314951278
+      Spark_1: 8225839548581295586
+      Spark_10: -5015654286854713379
+      Spark_2: 7946630753430100853
+      Spark_3: -4075050256211803965
+      Spark_4: 5687185836704332878
+      Spark_5: 7777962816033420669
+      Spark_6: 1446453873234536529
+      Spark_7: -7667974323161614391
+      Spark_8: 3537976076303495957
+      Spark_9: -1852428865396331642
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

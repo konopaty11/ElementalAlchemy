@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9677f1dd40cd88343a2f6a5943a92a3b, type: 3}
+  m_Name: CellConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CellConfig
+  startLevel: 1
+  cellConfigs:
+  - type: 0
+    icon: {fileID: 2871171899441639828, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 1, g: 0.7137255, b: 0.75686276, a: 1}
+    fontColor: {r: 0.54509807, g: 0, b: 0, a: 1}
+  - type: 1
+    icon: {fileID: -3791626967654746055, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.6784314, g: 0.84705883, b: 0.9019608, a: 1}
+    fontColor: {r: 0, g: 0, b: 0.54509807, a: 0}
+  - type: 2
+    icon: {fileID: 6543194386218980905, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.9019608, g: 0.9019608, b: 0.98039216, a: 1}
+    fontColor: {r: 0.18431373, g: 0.30980393, b: 0.30980393, a: 1}
+  - type: 3
+    icon: {fileID: -1973235551995539985, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.87058824, g: 0.72156864, b: 0.5294118, a: 1}
+    fontColor: {r: 0.3647059, g: 0.22745098, b: 0.101960786, a: 1}
+  - type: 4
+    icon: {fileID: -8245325735062209527, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 1, g: 0.98039216, b: 0.8039216, a: 1}
+    fontColor: {r: 0.29411766, g: 0, b: 0.50980395, a: 1}
+  - type: 5
+    icon: {fileID: -4121806084792404467, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.6862745, g: 0.93333334, b: 0.93333334, a: 1}
+    fontColor: {r: 0, g: 0.2784314, b: 0.67058825, a: 1}
+  - type: 6
+    icon: {fileID: -8602362240451502025, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 1, g: 0.7019608, b: 0.2784314, a: 1}
+    fontColor: {r: 0.54509807, g: 0, b: 0, a: 1}
+  - type: 7
+    icon: {fileID: 3811727834225610022, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.827451, g: 0.827451, b: 0.827451, a: 1}
+    fontColor: {r: 0.18431373, g: 0.30980393, b: 0.30980393, a: 1}
+  - type: 8
+    icon: {fileID: 8069595367119022210, guid: 3efb90ff216f96947945d66276d81554, type: 3}
+    backgroundColor: {r: 0.6901961, g: 0.76862746, b: 0.87058824, a: 1}
+    fontColor: {r: 0.09803922, g: 0.09803922, b: 0.4392157, a: 1}
+  - type: 9
+    icon: {fileID: 1372335161102834277, guid: 75851903557173f4db15cdc63605d584, type: 3}
+    backgroundColor: {r: 0.8784314, g: 0.6901961, b: 1, a: 1}
+    fontColor: {r: 0.29411766, g: 0, b: 0.50980395, a: 1}
