@@ -6,8 +6,9 @@ public class LatticeController : MonoBehaviour
     [SerializeField] Vector3 offsetPosition;
     [SerializeField] PoolController cellPool;
     [SerializeField] GeneralConfig generalConfig;
+    [SerializeField] CraftConfig craftConfig;
 
-    Transform[,] _cells;
+    CellController[,] _cells;
 
     void OnEnable()
     {
@@ -26,7 +27,7 @@ public class LatticeController : MonoBehaviour
 
     void Initialize()
     {
-        _cells = new Transform[sizeLattice, sizeLattice];
+        _cells = new CellController[sizeLattice, sizeLattice];
     }
 
     public void SpawnStartSet()
@@ -41,17 +42,17 @@ public class LatticeController : MonoBehaviour
     {
         GameObject _cellObject = cellPool.SpawnByPool();
 
-        CellRandomPosition(_cellObject.transform);
-
         CellController _cell = _cellObject.GetComponent<CellController>();
         _cell.Initialize(_cellType, _level);
+
+        CellRandomPosition(_cell);
     }
 
-    void CellRandomPosition(Transform _cellToPlace)
+    void CellRandomPosition(CellController _cellToPlace)
     {
         Vector2Int _indices = GetRandomAvailableCellIndices();
         _cells[_indices.x, _indices.y] = _cellToPlace;
-        _cellToPlace.localPosition = offsetPosition + ConvertVector2BetweenCoordsAndIndices(_indices);
+        _cellToPlace.transform.localPosition = offsetPosition + ConvertVector2BetweenCoordsAndIndices(_indices);
 
         //int _j = Random.Range(0, sizeLattice);
         //int _i = Random.Range(0, sizeLattice);
@@ -63,7 +64,7 @@ public class LatticeController : MonoBehaviour
     Vector2Int GetRandomAvailableCellIndices()
     {
         int _countAvailbaleCells = 0;
-        foreach (Transform _cell in _cells)
+        foreach (CellController _cell in _cells)
         {
             if (_cell == null)
                 _countAvailbaleCells++;
@@ -119,7 +120,7 @@ public class LatticeController : MonoBehaviour
                 if (_jAvailable != _j)
                 {
                     Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
-                    _cells[_i, _j].localPosition = offsetPosition + _position;
+                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -141,7 +142,7 @@ public class LatticeController : MonoBehaviour
                 if (_jAvailable != _j)
                 {
                     Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
-                    _cells[_i, _j].localPosition = offsetPosition + _position;
+                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -163,7 +164,7 @@ public class LatticeController : MonoBehaviour
                 if (_iAvailable != _i)
                 {
                     Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
-                    _cells[_i, _j].localPosition = offsetPosition + _position;
+                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -185,7 +186,7 @@ public class LatticeController : MonoBehaviour
                 if (_iAvailable != _i)
                 {
                     Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
-                    _cells[_i, _j].localPosition = offsetPosition + _position;
+                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -209,6 +210,31 @@ public class LatticeController : MonoBehaviour
         }
 
         _availableCoord++;
+    }
+
+    bool CheckCraft(Vector2Int _cell1Indices, Vector2Int _cell2Indices)
+    {
+        CellController _cell1 = _cells[_cell1Indices.x, _cell1Indices.y];
+        CellController _cell2 = _cells[_cell2Indices.x, _cell2Indices.y];
+
+        foreach (CraftSerializable _craft in craftConfig.crafts)
+        {
+            if ((_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level &&
+                _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level) 
+                ||
+                (_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level &&
+                _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level))
+            { 
+                
+            }
+        }
+
+        return false;
+    }
+
+    void DestroyCell()
+    {
+
     }
 
     Vector3Int ConvertVector2BetweenCoordsAndIndices(Vector2Int _base)
