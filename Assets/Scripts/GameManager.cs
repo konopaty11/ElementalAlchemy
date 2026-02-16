@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject gameCanvas;
     [SerializeField] LatticeController lattice;
 
+    bool _isGameStarted;
+
     void OnEnable()
     {
         InputSwipe.OnSwipeTrack += OnSwipeTrack;
@@ -13,12 +15,14 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        _isGameStarted = true;
+
         gameCanvas.SetActive(true);
         lattice.SpawnStartSet();
     }
 
     void OnSwipeTrack(Direction _direction)
     {
-        Debug.Log(_direction);
+        lattice.SwipeHandle(_direction);
     }
 }

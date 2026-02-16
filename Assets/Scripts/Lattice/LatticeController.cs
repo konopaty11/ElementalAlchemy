@@ -1,3 +1,4 @@
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class LatticeController : MonoBehaviour
@@ -9,16 +10,6 @@ public class LatticeController : MonoBehaviour
     [SerializeField] CraftConfig craftConfig;
 
     CellController[,] _cells;
-
-    void OnEnable()
-    {
-        InputSwipe.OnSwipeTrack += OnSwipeTrack;
-    }
-
-    void OnDisable()
-    {
-        InputSwipe.OnSwipeTrack += OnSwipeTrack;
-    }
 
     void Start()
     {
@@ -34,25 +25,38 @@ public class LatticeController : MonoBehaviour
     {
         foreach (CellType _type in generalConfig.StartCells)
         {
-            SpawnCell(_type, generalConfig.StartLevel);
+            SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
         }
     }
 
-    public void SpawnCell(CellType _cellType, int _level)
+    public void SpawnCellInRandomPosition(CellType _cellType, int _level)
+    {
+        CellController _cell = SpawnCell(_cellType, _level);
+
+        Vector2Int _indices = GetRandomAvailableCellIndices();
+        CellPosition(_cell, _indices);
+    }
+
+    public void SpawnCellInPosition(CellType _cellType, int _level, Vector2Int _indices)
+    {
+        CellController _cell = SpawnCell(_cellType, _level);
+        CellPosition(_cell, _indices);
+    }
+
+    CellController SpawnCell(CellType _cellType, int _level)
     {
         GameObject _cellObject = cellPool.SpawnByPool();
 
         CellController _cell = _cellObject.GetComponent<CellController>();
         _cell.Initialize(_cellType, _level);
 
-        CellRandomPosition(_cell);
+        return _cell;
     }
 
-    void CellRandomPosition(CellController _cellToPlace)
+    void CellPosition(CellController _cellToPlace, Vector2Int _indices)
     {
-        Vector2Int _indices = GetRandomAvailableCellIndices();
         _cells[_indices.x, _indices.y] = _cellToPlace;
-        _cellToPlace.transform.localPosition = offsetPosition + ConvertVector2BetweenCoordsAndIndices(_indices);
+        _cellToPlace.transform.localPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_indices);
 
         //int _j = Random.Range(0, sizeLattice);
         //int _i = Random.Range(0, sizeLattice);
@@ -89,7 +93,7 @@ public class LatticeController : MonoBehaviour
         return Vector2Int.down;
     }
 
-    void OnSwipeTrack(Direction _direction)
+    public void SwipeHandle(Direction _direction)
     {
         switch (_direction)
         {
@@ -110,88 +114,124 @@ public class LatticeController : MonoBehaviour
 
     void SwipeLeft()
     {
+        int _jStartValue = 0;
+
         for (int _i = 0; _i < _cells.GetLength(0); _i++)
         {
-            int _jAvailable = 0;
-            for (int _j = 0; _j < _cells.GetLength(1); _j++)
+            int _jAvailable = _jStartValue;
+            for (int _j = _jStartValue; _j < _cells.GetLength(1); _j++)
             {
                 if (_cells[_i, _j] == null) continue;
 
+                bool _isCrafted = false;
+
                 if (_jAvailable != _j)
                 {
-                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
+                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
                     _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
                 }
-                _jAvailable++;
+
+                if (_jAvailable != _jStartValue)
+                    _isCrafted = CheckCraft(new(_i, _jAvailable - 1), new(_i, _jAvailable));
+
+                if (!_isCrafted)
+                    _jAvailable++;
             }
         }
     }
 
     void SwipeRight()
     {
+        int _jStartValue = _cells.GetLength(1) - 1;
+
         for (int _i = 0; _i < _cells.GetLength(0); _i++)
         {
-            int _jAvailable = _cells.GetLength(1) - 1;
-            for (int _j = _cells.GetLength(1) - 1; _j >= 0; _j--)
+            int _jAvailable = _jStartValue;
+            for (int _j = _jStartValue; _j >= 0; _j--)
             {
                 if (_cells[_i, _j] == null) continue;
 
+                bool _isCrafted = false;
+
                 if (_jAvailable != _j)
                 {
-                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
+                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
                     _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
                 }
-                _jAvailable--;
+
+                if (_jAvailable != _jStartValue)
+                    _isCrafted = CheckCraft(new(_i, _jAvailable + 1), new(_i, _jAvailable));
+
+                if (!_isCrafted)
+                    _jAvailable--;
             }
         }
     }
 
     void SwipeTop()
     {
+        int _iStartValue = 0;
+
         for (int _j = 0; _j < _cells.GetLength(1); _j++)
         {
-            int _iAvailable = 0;
-            for (int _i = 0; _i < _cells.GetLength(0); _i++)
+            int _iAvailable = _iStartValue;
+            for (int _i = _iStartValue; _i < _cells.GetLength(0); _i++)
             {
                 if (_cells[_i, _j] == null) continue;
 
+                bool _isCrafted = false;
+
                 if (_iAvailable != _i)
                 {
-                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
+                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
                     _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
                 }
-                _iAvailable++;
+
+                if (_iAvailable != _iStartValue)
+                    _isCrafted = CheckCraft(new(_iAvailable - 1, _j), new(_iAvailable, _j));
+
+                if (!_isCrafted)
+                    _iAvailable++;
             }
         }
     }
 
     void SwipeBottom()
     {
+        int _iStartValue = _cells.GetLength(1) - 1;
+
         for (int _j = 0; _j < _cells.GetLength(1); _j++)
         {
-            int _iAvailable = _cells.GetLength(0) - 1;
-            for (int _i = _cells.GetLength(0) - 1; _i >= 0; _i--)
+            int _iAvailable = _iStartValue;
+            for (int _i = _iStartValue; _i >= 0; _i--)
             {
                 if (_cells[_i, _j] == null) continue;
 
+                bool _isCrafted = false;
+
                 if (_iAvailable != _i)
                 {
-                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
+                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
                     _cells[_i, _j].transform.localPosition = offsetPosition + _position;
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
                 }
-                _iAvailable--;
+
+                if (_iAvailable != _iStartValue)
+                    _isCrafted = CheckCraft(new(_iAvailable + 1, _j), new(_iAvailable, _j));
+
+                if (!_isCrafted)
+                    _iAvailable--;
             }
         }
     }
@@ -202,7 +242,7 @@ public class LatticeController : MonoBehaviour
 
         if (_availableCoord != _changeCoord)
         {
-            Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(_newPosition);
+            Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_newPosition);
             _currentCell.localPosition = offsetPosition + _position;
 
             _availableCell = _currentCell;
@@ -217,29 +257,40 @@ public class LatticeController : MonoBehaviour
         CellController _cell1 = _cells[_cell1Indices.x, _cell1Indices.y];
         CellController _cell2 = _cells[_cell2Indices.x, _cell2Indices.y];
 
+        Debug.Log(_cell2.CellType);
+
         foreach (CraftSerializable _craft in craftConfig.crafts)
         {
+            Debug.Log(_craft.cell_1.type);
+
             if ((_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level &&
                 _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level) 
                 ||
                 (_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level &&
                 _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level))
-            { 
-                
+            {
+                DestroyCell(_cell1Indices);
+                DestroyCell(_cell2Indices);
+
+                SpawnCellInPosition(_craft.resultCell.type, _craft.resultCell.level, _cell1Indices);
+
+                return true;
             }
         }
 
         return false;
     }
 
-    void DestroyCell()
+    void DestroyCell(Vector2Int _cellIndices)
     {
-
+        GameObject _cellObject = _cells[_cellIndices.x, _cellIndices.y].gameObject;
+        cellPool.ReturnToPool(_cellObject);
+        _cells[_cellIndices.x, _cellIndices.y] = null;
     }
 
-    Vector3Int ConvertVector2BetweenCoordsAndIndices(Vector2Int _base)
+    Vector2Int ConvertVector2BetweenCoordsAndIndices(Vector2Int _base)
     {
-        Vector3Int _converted = new Vector3Int(_base.y, _cells.GetLength(0) - 1 - _base.x);
+        Vector2Int _converted = new Vector2Int(_base.y, _cells.GetLength(0) - 1 - _base.x);
         return _converted;
     }
 }

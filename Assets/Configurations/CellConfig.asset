@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9677f1dd40cd88343a2f6a5943a92a3b, type: 3}
   m_Name: CellConfig
   m_EditorClassIdentifier: Assembly-CSharp::CellConfig
-  startLevel: 1
   cellConfigs:
   - type: 0
     icon: {fileID: 2871171899441639828, guid: 3efb90ff216f96947945d66276d81554, type: 3}
@@ -21,7 +20,7 @@ MonoBehaviour:
   - type: 1
     icon: {fileID: -3791626967654746055, guid: 3efb90ff216f96947945d66276d81554, type: 3}
     backgroundColor: {r: 0.6784314, g: 0.84705883, b: 0.9019608, a: 1}
-    fontColor: {r: 0, g: 0, b: 0.54509807, a: 0}
+    fontColor: {r: 0, g: 0, b: 0.54509807, a: 1}
   - type: 2
     icon: {fileID: 6543194386218980905, guid: 3efb90ff216f96947945d66276d81554, type: 3}
     backgroundColor: {r: 0.9019608, g: 0.9019608, b: 0.98039216, a: 1}

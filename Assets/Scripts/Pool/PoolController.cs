@@ -37,6 +37,7 @@ public class PoolController : MonoBehaviour
 
     public void ReturnToPool(GameObject _gameObject)
     {
+        _gameObject.SetActive(false);
         _pool.Enqueue(_gameObject);
     }
 

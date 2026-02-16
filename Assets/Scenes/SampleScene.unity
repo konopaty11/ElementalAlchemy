@@ -6003,6 +6003,7 @@ MonoBehaviour:
   offsetPosition: {x: -2.5, y: -2.5, z: 0}
   cellPool: {fileID: 1601813963}
   generalConfig: {fileID: 11400000, guid: 705723d0030811040a2f9df8f4495355, type: 2}
+  craftConfig: {fileID: 11400000, guid: ec0127e0ec9c5cc4c8ed3d9e11697486, type: 2}
 --- !u!1 &1520389133
 GameObject:
   m_ObjectHideFlags: 0

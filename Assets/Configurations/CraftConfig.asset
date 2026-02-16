@@ -85,21 +85,3 @@ MonoBehaviour:
     resultCell:
       type: 3
       level: 3
-  - cell_1:
-      type: 0
-      level: 0
-    cell_2:
-      type: 0
-      level: 0
-    resultCell:
-      type: 0
-      level: 0
-  - cell_1:
-      type: 0
-      level: 0
-    cell_2:
-      type: 0
-      level: 0
-    resultCell:
-      type: 0
-      level: 0
