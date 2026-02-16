@@ -90,65 +90,125 @@ public class LatticeController : MonoBehaviour
 
     void OnSwipeTrack(Direction _direction)
     {
-        string _str = "";
-        for (int _i = 0; _i < _cells.GetLength(0); _i++)
+        switch (_direction)
         {
-            for (int _j = 0; _j < _cells.GetLength(1); _j++)
-            {
-                if (_cells[_i, _j] == null)
-                    _str += "^";
-                else
-                    _str += "*";
-            }
-            _str += "\n";
+            case Direction.Left:
+                SwipeLeft();
+                break;
+            case Direction.Right:
+                SwipeRight();
+                break;
+            case Direction.Top:
+                SwipeTop();
+                break;
+            case Direction.Bottom:
+                SwipeBottom();
+                break;
         }
-        Debug.Log(_str);
+    }
 
+    void SwipeLeft()
+    {
         for (int _i = 0; _i < _cells.GetLength(0); _i++)
         {
             int _jAvailable = 0;
             for (int _j = 0; _j < _cells.GetLength(1); _j++)
             {
-                if (_cells[_i, _j] != null && _jAvailable != _j)
+                if (_cells[_i, _j] == null) continue;
+
+                if (_jAvailable != _j)
                 {
                     Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
                     _cells[_i, _j].localPosition = offsetPosition + _position;
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
-                    Debug.Log($"{new Vector3(_jAvailable, _i)}");
-                    _jAvailable++;
                 }
-                //MoveCell(_cells[_j, _i], _cells[_j, _iAvailable], new(_j, _iAvailable), _i, ref _iAvailable);
+                _jAvailable++;
             }
         }
-
-        string _str2 = "";
-        for (int _i = 0; _i < _cells.GetLength(0); _i++)
-        {
-            for (int _j = 0; _j < _cells.GetLength(1); _j++)
-            {
-                if (_cells[_i, _j] == null)
-                    _str2 += "^";
-                else
-                    _str2 += "*";
-            }
-            _str2 += "\n";
-        }
-        Debug.Log(_str2);
-
     }
 
-    void MoveCell(Transform _currentCell, Transform _availableCell, Vector3 _newPosition, int _changeCoord, ref int _availableCoord)
+    void SwipeRight()
     {
-        if (_currentCell != null && _availableCoord != _changeCoord)
+        for (int _i = 0; _i < _cells.GetLength(0); _i++)
         {
-            _currentCell.localPosition = offsetPosition + _newPosition;
+            int _jAvailable = _cells.GetLength(1) - 1;
+            for (int _j = _cells.GetLength(1) - 1; _j >= 0; _j--)
+            {
+                if (_cells[_i, _j] == null) continue;
+
+                if (_jAvailable != _j)
+                {
+                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
+                    _cells[_i, _j].localPosition = offsetPosition + _position;
+
+                    _cells[_i, _jAvailable] = _cells[_i, _j];
+                    _cells[_i, _j] = null;
+                }
+                _jAvailable--;
+            }
+        }
+    }
+
+    void SwipeTop()
+    {
+        for (int _j = 0; _j < _cells.GetLength(1); _j++)
+        {
+            int _iAvailable = 0;
+            for (int _i = 0; _i < _cells.GetLength(0); _i++)
+            {
+                if (_cells[_i, _j] == null) continue;
+
+                if (_iAvailable != _i)
+                {
+                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
+                    _cells[_i, _j].localPosition = offsetPosition + _position;
+
+                    _cells[_iAvailable, _j] = _cells[_i, _j];
+                    _cells[_i, _j] = null;
+                }
+                _iAvailable++;
+            }
+        }
+    }
+
+    void SwipeBottom()
+    {
+        for (int _j = 0; _j < _cells.GetLength(1); _j++)
+        {
+            int _iAvailable = _cells.GetLength(0) - 1;
+            for (int _i = _cells.GetLength(0) - 1; _i >= 0; _i--)
+            {
+                if (_cells[_i, _j] == null) continue;
+
+                if (_iAvailable != _i)
+                {
+                    Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
+                    _cells[_i, _j].localPosition = offsetPosition + _position;
+
+                    _cells[_iAvailable, _j] = _cells[_i, _j];
+                    _cells[_i, _j] = null;
+                }
+                _iAvailable--;
+            }
+        }
+    }
+
+    void MoveCell(Transform _currentCell, Transform _availableCell, Vector2Int _newPosition, int _changeCoord, int _availableCoord)
+    {
+        if (_currentCell == null) return;
+
+        if (_availableCoord != _changeCoord)
+        {
+            Vector3Int _position = ConvertVector2BetweenCoordsAndIndices(_newPosition);
+            _currentCell.localPosition = offsetPosition + _position;
 
             _availableCell = _currentCell;
             _currentCell = null;
-            _availableCoord++;
         }
+
+        _availableCoord++;
     }
 
     Vector3Int ConvertVector2BetweenCoordsAndIndices(Vector2Int _base)
