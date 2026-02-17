@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LatticeController : MonoBehaviour
 {
@@ -8,6 +10,8 @@ public class LatticeController : MonoBehaviour
     [SerializeField] PoolController cellPool;
     [SerializeField] GeneralConfig generalConfig;
     [SerializeField] CraftConfig craftConfig;
+
+    public static UnityAction<CellType, int> OnCrafted;
 
     CellController[,] _cells;
 
@@ -23,10 +27,19 @@ public class LatticeController : MonoBehaviour
 
     public void SpawnStartSet()
     {
-        foreach (CellType _type in generalConfig.StartCells)
-        {
-            SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
-        }
+        //foreach (CellType _type in generalConfig.StartCells)
+        //{
+        //    SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+        //}
+
+        SpawnCellInPosition(CellType.Air, 3, new(4, 4));
+        SpawnCellInPosition(CellType.Earth, 3, new(4, 5));
+
+        //SpawnCellInPosition(CellType.Fire, 3, new(1, 0));
+        //SpawnCellInPosition(CellType.Earth, 3, new(1, 1));
+
+        //SpawnCellInPosition(CellType.Lightning, 1, new(1, 4));
+        //SpawnCellInPosition(CellType.Wave, 1, new(1, 5));
     }
 
     public void SpawnCellInRandomPosition(CellType _cellType, int _level)
@@ -124,11 +137,11 @@ public class LatticeController : MonoBehaviour
                 if (_cells[_i, _j] == null) continue;
 
                 bool _isCrafted = false;
+                Vector2Int _targetIndices = new(_i, _j);
 
                 if (_jAvailable != _j)
                 {
-                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
-                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
+                    _targetIndices = new(_i, _jAvailable);
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -136,6 +149,11 @@ public class LatticeController : MonoBehaviour
 
                 if (_jAvailable != _jStartValue)
                     _isCrafted = CheckCraft(new(_i, _jAvailable - 1), new(_i, _jAvailable));
+
+                if (_isCrafted)
+                    _targetIndices = new(_i, _jAvailable - 1);
+
+                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _jAvailable++;
@@ -155,11 +173,11 @@ public class LatticeController : MonoBehaviour
                 if (_cells[_i, _j] == null) continue;
 
                 bool _isCrafted = false;
+                Vector2Int _targetIndices = new(_i, _j);
 
                 if (_jAvailable != _j)
                 {
-                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_i, _jAvailable));
-                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
+                    _targetIndices = new(_i, _jAvailable);
 
                     _cells[_i, _jAvailable] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -167,6 +185,11 @@ public class LatticeController : MonoBehaviour
 
                 if (_jAvailable != _jStartValue)
                     _isCrafted = CheckCraft(new(_i, _jAvailable + 1), new(_i, _jAvailable));
+
+                if (_isCrafted)
+                    _targetIndices = new(_i, _jAvailable + 1);
+
+                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _jAvailable--;
@@ -186,11 +209,11 @@ public class LatticeController : MonoBehaviour
                 if (_cells[_i, _j] == null) continue;
 
                 bool _isCrafted = false;
+                Vector2Int _targetIndices = new(_i, _j);
 
                 if (_iAvailable != _i)
                 {
-                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
-                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
+                    _targetIndices = new(_iAvailable, _j);
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
@@ -198,6 +221,11 @@ public class LatticeController : MonoBehaviour
 
                 if (_iAvailable != _iStartValue)
                     _isCrafted = CheckCraft(new(_iAvailable - 1, _j), new(_iAvailable, _j));
+
+                if (_isCrafted)
+                    _targetIndices = new(_iAvailable - 1, _j);
+
+                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _iAvailable++;
@@ -217,18 +245,25 @@ public class LatticeController : MonoBehaviour
                 if (_cells[_i, _j] == null) continue;
 
                 bool _isCrafted = false;
+                Vector2Int _targetIndices = new(_i, _j);
 
                 if (_iAvailable != _i)
                 {
-                    Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(new(_iAvailable, _j));
-                    _cells[_i, _j].transform.localPosition = offsetPosition + _position;
+                    _targetIndices = new(_iAvailable, _j);
 
                     _cells[_iAvailable, _j] = _cells[_i, _j];
                     _cells[_i, _j] = null;
                 }
 
                 if (_iAvailable != _iStartValue)
+                {
                     _isCrafted = CheckCraft(new(_iAvailable + 1, _j), new(_iAvailable, _j));
+                }
+
+                if (_isCrafted)
+                    _targetIndices = new(_iAvailable + 1, _j);
+
+                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _iAvailable--;
@@ -252,28 +287,43 @@ public class LatticeController : MonoBehaviour
         _availableCoord++;
     }
 
+    IEnumerator MoveSmoothCell(Transform _cell, Vector2Int _fromIndices, Vector2Int _toIndices)
+    {
+        Vector3 _startPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_fromIndices);
+        Vector3 _targetPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_toIndices);
+
+        float _duration = generalConfig.DurationCellMove;
+        float _elapsed = 0f;
+        while (_elapsed < _duration)
+        {
+            _elapsed += Time.deltaTime;
+
+            _cell.localPosition = Vector3.Lerp(_startPosition, _targetPosition, _elapsed / _duration);
+
+            yield return null;
+        }
+    }
+
     bool CheckCraft(Vector2Int _cell1Indices, Vector2Int _cell2Indices)
     {
         CellController _cell1 = _cells[_cell1Indices.x, _cell1Indices.y];
         CellController _cell2 = _cells[_cell2Indices.x, _cell2Indices.y];
 
-        Debug.Log(_cell2.CellType);
-
         foreach (CraftSerializable _craft in craftConfig.crafts)
         {
-            Debug.Log(_craft.cell_1.type);
+            //Debug.Log($"{_craft.resultCell.type}" +
+            //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level}" +
+            //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level}");
 
             if ((_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level &&
                 _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level) 
                 ||
-                (_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level &&
-                _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level))
+                (_craft.cell_1.type == _cell2.CellType && _craft.cell_1.level == _cell2.Level &&
+                _craft.cell_2.type == _cell1.CellType && _craft.cell_2.level == _cell1.Level))
             {
-                DestroyCell(_cell1Indices);
-                DestroyCell(_cell2Indices);
+                StartCoroutine(Craft(_craft, _cell1Indices, _cell2Indices));
 
-                SpawnCellInPosition(_craft.resultCell.type, _craft.resultCell.level, _cell1Indices);
-
+                OnCrafted?.Invoke(_craft.resultCell.type, _craft.resultCell.level);
                 return true;
             }
         }
@@ -281,8 +331,20 @@ public class LatticeController : MonoBehaviour
         return false;
     }
 
-    void DestroyCell(Vector2Int _cellIndices)
+    IEnumerator Craft(CraftSerializable _craft, Vector2Int _cell1Indices, Vector2Int _cell2Indices)
     {
+        StartCoroutine(DestroyCell(_cell1Indices));
+        yield return StartCoroutine(DestroyCell(_cell2Indices));
+
+        Debug.Log(_craft.resultCell.type);
+
+        SpawnCellInPosition(_craft.resultCell.type, _craft.resultCell.level, _cell1Indices);
+    }
+
+    IEnumerator DestroyCell(Vector2Int _cellIndices)
+    {
+        yield return new WaitForSeconds(generalConfig.DurationCellMove);
+
         GameObject _cellObject = _cells[_cellIndices.x, _cellIndices.y].gameObject;
         cellPool.ReturnToPool(_cellObject);
         _cells[_cellIndices.x, _cellIndices.y] = null;

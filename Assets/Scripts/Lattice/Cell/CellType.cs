@@ -9,5 +9,6 @@ public enum CellType
     Lava,
     Mountain,
     Storm,
+    Volcano,
     Dragon
 }

@@ -6,6 +6,8 @@ public class CellController : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] TextMeshPro levelText;
+    [SerializeField] Vector3 iconAlonePosition;
+    [SerializeField] Vector3 iconWithLevelPosition;
     [SerializeField] SpriteRenderer icon;
     [SerializeField] SpriteRenderer background;
 
@@ -39,6 +41,15 @@ public class CellController : MonoBehaviour
 
     void LevelTextUpdate()
     {
-        levelText.text = _numberConverter.GetRomanNumber(Level);
+        if (Level == 1)
+        {
+            icon.transform.localPosition = iconAlonePosition;
+            levelText.text = "";
+        }
+        else
+        {
+            icon.transform.localPosition = iconWithLevelPosition;
+            levelText.text = _numberConverter.GetRomanNumber(Level);
+        }
     }
 }

@@ -49,7 +49,11 @@ MonoBehaviour:
     icon: {fileID: 8069595367119022210, guid: 3efb90ff216f96947945d66276d81554, type: 3}
     backgroundColor: {r: 0.6901961, g: 0.76862746, b: 0.87058824, a: 1}
     fontColor: {r: 0.09803922, g: 0.09803922, b: 0.4392157, a: 1}
-  - type: 9
+  - type: 10
     icon: {fileID: 1372335161102834277, guid: 75851903557173f4db15cdc63605d584, type: 3}
     backgroundColor: {r: 0.8784314, g: 0.6901961, b: 1, a: 1}
     fontColor: {r: 0.29411766, g: 0, b: 0.50980395, a: 1}
+  - type: 9
+    icon: {fileID: 21300000, guid: 35cd4802abacd8040825d9afe961392d, type: 3}
+    backgroundColor: {r: 0.54509807, g: 0.22745098, b: 0.22745098, a: 1}
+    fontColor: {r: 1, g: 0.7019608, b: 0.2784314, a: 1}
