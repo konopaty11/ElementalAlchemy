@@ -15,10 +15,3 @@ public class CraftSerializable
     public CellSerializable cell_2;
     public CellSerializable resultCell;
 }
-
-[Serializable]
-public class CellSerializable
-{
-    public CellType type;
-    public int level;
-}

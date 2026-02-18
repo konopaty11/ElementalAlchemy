@@ -27,7 +27,7 @@ public class ScoreManager : MonoBehaviour
 
     void OnDisable()
     {
-        LatticeController.OnCrafted += OnCrafted;
+        LatticeController.OnCrafted -= OnCrafted;
     }
 
     void OnCrafted(CellType _cellType, int _level)
@@ -42,7 +42,10 @@ public class ScoreManager : MonoBehaviour
     void ScoreUpdate()
     {
         if (Score > Record)
+        {
+            Record = Score;
             maxScoreText.text = Record.ToString();
+        }
 
         scoreText.text = Score.ToString();
     }

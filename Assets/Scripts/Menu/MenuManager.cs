@@ -10,4 +10,9 @@ public class MenuManager : MonoBehaviour
         menuCanvas.SetActive(false);
         gameManager.StartGame();
     }
+
+    public void OpenMenu()
+    {
+        menuCanvas.SetActive(true);
+    }
 }

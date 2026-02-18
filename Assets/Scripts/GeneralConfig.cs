@@ -10,11 +10,15 @@ public class GeneralConfig : ScriptableObject
     [Header("Cells")]
     [SerializeField] float durationCellMove = 0.1f;
     [SerializeField] int startLevel = 1;
+    [SerializeField] int countCellsToAdd = 2;
+    [SerializeField] List<CellType> cellsToAdd;
     [SerializeField] List<CellType> startCells;
 
     public float MinSwipeLenght => minSwipeLenght;
 
     public float DurationCellMove => durationCellMove;
     public int StartLevel => startLevel;
+    public int CountCellsToAdd => countCellsToAdd;
+    public List<CellType> CellsToAdd => cellsToAdd;
     public List<CellType> StartCells => startCells;
 }

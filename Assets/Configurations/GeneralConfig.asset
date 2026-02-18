@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: GeneralConfig
   m_EditorClassIdentifier: Assembly-CSharp::GeneralConfig
   minSwipeLenght: 250
+  durationCellMove: 0.1
   startLevel: 1
+  cellsToAdd: 00000000010000000200000003000000
   startCells: 00000000000000000000000000000000000000000100000001000000010000000100000001000000
