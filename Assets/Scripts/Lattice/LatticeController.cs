@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,12 +11,24 @@ public class LatticeController : MonoBehaviour
     [SerializeField] PoolController cellPool;
     [SerializeField] GeneralConfig generalConfig;
     [SerializeField] CraftConfig craftConfig;
+    [SerializeField] Saves saves;
 
     public static UnityAction<CellType, int> OnCrafted;
 
     CellController[,] _cells;
+    List<SaveCellSerializable> _saveCells;
 
     int _lastAddedCellIndex;
+
+    void OnEnable()
+    {
+        Saves.OnDataLoad += OnDataLoad;
+    }
+
+    void OnDisable()
+    {
+        Saves.OnDataLoad -= OnDataLoad;
+    }
 
     void Start()
     {
@@ -27,11 +40,27 @@ public class LatticeController : MonoBehaviour
         _cells = new CellController[sizeLattice, sizeLattice];
     }
 
+    void OnDataLoad(SaveData _data)
+    {
+        Debug.Log(_data.cells.Count);
+        _saveCells = _data.cells;
+    }
+
     public void SpawnStartSet()
     {
-        foreach (CellType _type in generalConfig.StartCells)
+        if (_saveCells.Count == 0)
         {
-            SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+            foreach (CellType _type in generalConfig.StartCells)
+            {
+                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+            }
+        }
+        else
+        {
+            foreach (SaveCellSerializable _cell in _saveCells)
+            {
+                SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
+            }
         }
 
         //SpawnCellInPosition(CellType.Water, 1, new(4, 0));
@@ -85,6 +114,8 @@ public class LatticeController : MonoBehaviour
     {
         _cells[_indices.x, _indices.y] = _cellToPlace;
         _cellToPlace.transform.localPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_indices);
+
+        saves.SaveCells(_cells);
 
         //int _j = Random.Range(0, sizeLattice);
         //int _i = Random.Range(0, sizeLattice);
@@ -140,6 +171,8 @@ public class LatticeController : MonoBehaviour
         }
 
         AddCellsForSwipe();
+
+        saves.SaveCells(_cells);
     }
 
     void AddCellsForSwipe()
@@ -399,7 +432,8 @@ public class LatticeController : MonoBehaviour
     {
         GameObject _cellObject = _cells[_cellIndices.x, _cellIndices.y].gameObject;
         _cells[_cellIndices.x, _cellIndices.y] = null;
-        
+        saves.SaveCells(_cells);
+
         //yield return new WaitForSeconds(generalConfig.DurationCellMove);
 
         cellPool.ReturnToPool(_cellObject);
@@ -407,7 +441,7 @@ public class LatticeController : MonoBehaviour
 
     Vector2Int ConvertVector2BetweenCoordsAndIndices(Vector2Int _base)
     {
-        Vector2Int _converted = new Vector2Int(_base.y, _cells.GetLength(0) - 1 - _base.x);
+        Vector2Int _converted = new(_base.y, _cells.GetLength(0) - 1 - _base.x);
         return _converted;
     }
 }

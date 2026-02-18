@@ -6,6 +6,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI maxScoreText;
     [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] ScoreConfig scoreConfig;
+    [SerializeField] Saves saves;
 
     int _score;
     public int Score
@@ -18,16 +19,33 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    public int Record { get; private set; }
+    int _record;
+    public int Record 
+    {
+        get => _record;
+        private set
+        {
+            _record = value;
+            RecordUpdate();
+        }
+    }
 
     void OnEnable()
     {
         LatticeController.OnCrafted += OnCrafted;
+        Saves.OnDataLoad += OnLoadData;
     }
 
     void OnDisable()
     {
         LatticeController.OnCrafted -= OnCrafted;
+        Saves.OnDataLoad -= OnLoadData;
+    }
+
+    void OnLoadData(SaveData _data)
+    {
+        Score = _data.score;
+        Record = _data.record;
     }
 
     void OnCrafted(CellType _cellType, int _level)
@@ -44,9 +62,16 @@ public class ScoreManager : MonoBehaviour
         if (Score > Record)
         {
             Record = Score;
-            maxScoreText.text = Record.ToString();
+            RecordUpdate();
         }
 
         scoreText.text = Score.ToString();
+
+        saves.SaveScore(Score, Record);
+    }
+
+    void RecordUpdate()
+    {
+        maxScoreText.text = Record.ToString();
     }
 }

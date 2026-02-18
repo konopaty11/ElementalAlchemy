@@ -52,17 +52,18 @@ public class Saves : MonoBehaviour
 
     public void SaveCells(CellController[,] _cellControllers)
     {
-        List<CellSerializable> _cells = new();
-        foreach (CellController _cellController in _cellControllers)
-        {
-            CellSerializable _cell = null;
-            if (_cellController != null)
+        List<SaveCellSerializable> _cells = new();
+        for (int _i = 0; _i < _cellControllers.GetLength(0); _i++)
+            for (int _j = 0; _j < _cellControllers.GetLength(1); _j++)
             {
-                _cell = new(_cellController.CellType, _cellController.Level);
-            }
+                SaveCellSerializable _cell = null;
+                if (_cellControllers[_i, _j] != null)
+                {
+                    _cell = new(_cellControllers[_i, _j].CellType, _cellControllers[_i, _j].Level, new(_i, _j));
+                }
 
-            _cells.Add(_cell);
-        }
+                _cells.Add(_cell);
+            }
 
         SaveData();
     }
