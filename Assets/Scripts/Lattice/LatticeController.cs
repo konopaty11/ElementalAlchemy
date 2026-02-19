@@ -12,6 +12,8 @@ public class LatticeController : MonoBehaviour
     [SerializeField] GeneralConfig generalConfig;
     [SerializeField] CraftConfig craftConfig;
     [SerializeField] Saves saves;
+    [SerializeField] ScoreManager scoreManager;
+    [SerializeField] GameManager gameManager;
 
     public static UnityAction<CellType, int> OnCrafted;
 
@@ -39,7 +41,7 @@ public class LatticeController : MonoBehaviour
     {
         _cells = new CellController[sizeLattice, sizeLattice];
     }
-
+    
     void OnDataLoad(SaveData _data)
     {
         Debug.Log(_data.cells.Count);
@@ -59,7 +61,8 @@ public class LatticeController : MonoBehaviour
         {
             foreach (SaveCellSerializable _cell in _saveCells)
             {
-                SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
+                if (_cell.type != CellType.None)
+                    SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
             }
         }
 
@@ -83,6 +86,11 @@ public class LatticeController : MonoBehaviour
                     DestroyCell(new(_i, _j));
             }
         }
+
+        _saveCells = new();
+        scoreManager.Score = 0;
+
+        SpawnStartSet();
     }
 
     public void SpawnCellInRandomPosition(CellType _cellType, int _level)
@@ -101,7 +109,7 @@ public class LatticeController : MonoBehaviour
 
     CellController SpawnCell(CellType _cellType, int _level)
     {
-        Debug.Log(_cellType);
+        //Debug.Log(_cellType);
         GameObject _cellObject = cellPool.SpawnByPool();
 
         CellController _cell = _cellObject.GetComponent<CellController>();
@@ -149,7 +157,7 @@ public class LatticeController : MonoBehaviour
             }
         }
 
-        return Vector2Int.down;
+        throw new UnityException("None cell available");
     }
 
     public void SwipeHandle(Direction _direction)
@@ -173,6 +181,8 @@ public class LatticeController : MonoBehaviour
         AddCellsForSwipe();
 
         saves.SaveCells(_cells);
+
+        CheckLattice();
     }
 
     void AddCellsForSwipe()
@@ -181,7 +191,16 @@ public class LatticeController : MonoBehaviour
         for (int i = _lastAddedCellIndex; i < _targetIndex; i++)
         {
             CellType _type = generalConfig.CellsToAdd[i %  generalConfig.CellsToAdd.Count];
-            SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+
+            try
+            {
+                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+            }
+            catch (UnityException)
+            {
+                gameManager.LooseGame();
+                return;
+            }
         }
 
         _lastAddedCellIndex = _targetIndex;
@@ -395,11 +414,7 @@ public class LatticeController : MonoBehaviour
             //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level}" +
             //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level}");
 
-            if ((_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level &&
-                _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level) 
-                ||
-                (_craft.cell_1.type == _cell2.CellType && _craft.cell_1.level == _cell2.Level &&
-                _craft.cell_2.type == _cell1.CellType && _craft.cell_2.level == _cell1.Level))
+            if (CanCraft(_craft, _cell1, _cell2))
             {
                 Craft(_craft, _cell1Indices, _cell2Indices);
 
@@ -411,6 +426,17 @@ public class LatticeController : MonoBehaviour
         }
 
         return false;
+    }
+
+    bool CanCraft(CraftSerializable _craft, CellController _cell1, CellController _cell2)
+    {
+        bool _canCraft = (_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level &&
+                _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level)
+                ||
+                (_craft.cell_1.type == _cell2.CellType && _craft.cell_1.level == _cell2.Level &&
+                _craft.cell_2.type == _cell1.CellType && _craft.cell_2.level == _cell1.Level);
+
+        return _canCraft;
     }
 
     void Craft(CraftSerializable _craft, Vector2Int _cell1Indices, Vector2Int _cell2Indices)
@@ -426,6 +452,86 @@ public class LatticeController : MonoBehaviour
         //Debug.Log(_craft.resultCell.type);
 
         SpawnCellInPosition(_craft.resultCell.type, _craft.resultCell.level, _cell1Indices);
+    }
+
+    public void CheckLattice()
+    {
+        for (int _i = 0; _i < _cells.GetLength(0); _i++)
+            for (int _j = 0; _j < _cells.GetLength(1); _j++)
+            {
+                if (_cells[_i, _j] == null)
+                    return;
+            }
+
+        for (int _j = 0; _j < _cells.GetLength(1); _j++)
+        {
+            for (int _i = 0; _i < _cells.GetLength(0) - 1; _i++)
+            {
+                CellController _cell1 = _cells[_i, _j];
+                CellController _cell2 = _cells[_i + 1, _j];
+
+                foreach (CraftSerializable _craft in craftConfig.crafts)
+                {
+                    if (CanCraft(_craft, _cell1, _cell2))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (int _j = 0; _j < _cells.GetLength(1) - 2; _j++)
+        {
+            for (int _i = _cells.GetLength(0) - 1; _i >= 1; _i--)
+            {
+                CellController _cell1 = _cells[_i, _j];
+                CellController _cell2 = _cells[_i - 1, _j];
+
+                foreach (CraftSerializable _craft in craftConfig.crafts)
+                {
+                    if (CanCraft(_craft, _cell1, _cell2))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (int _j = 0; _j < _cells.GetLength(1) - 1; _j++)
+        {
+            for (int _i = 0; _i < _cells.GetLength(0); _i++)
+            {
+                CellController _cell1 = _cells[_i, _j];
+                CellController _cell2 = _cells[_i, _j + 1];
+
+                foreach (CraftSerializable _craft in craftConfig.crafts)
+                {
+                    if (CanCraft(_craft, _cell1, _cell2))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (int _j = _cells.GetLength(1) - 1; _j >= 1; _j--)
+        {
+            for (int _i = 0; _i < _cells.GetLength(0); _i++)
+            {
+                CellController _cell1 = _cells[_i, _j];
+                CellController _cell2 = _cells[_i, _j - 1];
+
+                foreach (CraftSerializable _craft in craftConfig.crafts)
+                {
+                    if (CanCraft(_craft, _cell1, _cell2))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        gameManager.LooseGame();
     }
 
     void DestroyCell(Vector2Int _cellIndices)

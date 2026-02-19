@@ -15,6 +15,8 @@ public class RomanArabicNumberConverter : ScriptableObject
                 return _numberPair.romanNumber;
         }
 
+        Debug.Log(_arabicNumber);
+
         Debug.LogError("A arabic number is missing");
         return null;
     }

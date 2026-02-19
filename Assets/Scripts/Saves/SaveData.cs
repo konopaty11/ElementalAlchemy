@@ -16,6 +16,9 @@ public class SaveCellSerializable : CellSerializable
 
     public SaveCellSerializable(CellType _type, int _level, Vector2Int _indices) : base(_type, _level)
     {
+        //Debug.Log(level);
         indices = _indices;
     }
+
+    public SaveCellSerializable() { }
 }

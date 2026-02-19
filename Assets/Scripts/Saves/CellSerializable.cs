@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class CellSerializable
 {
-    public CellType type;
+    public CellType type = CellType.None;
     public int level;
 
     public CellSerializable(CellType _type, int _level)

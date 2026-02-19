@@ -10,5 +10,6 @@ public enum CellType
     Mountain,
     Storm,
     Volcano,
-    Dragon
+    Dragon,
+    None
 }

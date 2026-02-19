@@ -61,16 +61,20 @@ public class Saves : MonoBehaviour
                 {
                     _cell = new(_cellControllers[_i, _j].CellType, _cellControllers[_i, _j].Level, new(_i, _j));
                 }
+                else
+                    _cell = new();
 
-                _cells.Add(_cell);
+                    _cells.Add(_cell);
             }
+
+        _data.cells = _cells;
 
         SaveData();
     }
 
     public void SaveData()
     {
-        string _jsonData = JsonUtility.ToJson(_data);
+        string _jsonData = JsonUtility.ToJson(_data, true);
         File.WriteAllText(_path, _jsonData);
     }
 }

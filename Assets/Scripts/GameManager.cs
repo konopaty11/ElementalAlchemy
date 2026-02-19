@@ -6,8 +6,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] MenuManager menuManager;
     [SerializeField] GameObject gameCanvas;
     [SerializeField] LatticeController lattice;
+    [SerializeField] LooseWindowController looseWindow;
 
     bool _isGameStarted;
+    bool _isSpawned = false;
 
     void OnEnable()
     {
@@ -23,7 +25,12 @@ public class GameManager : MonoBehaviour
     {
         _isGameStarted = true;
         gameCanvas.SetActive(true);
-        lattice.SpawnStartSet();
+
+        if (!_isSpawned)
+        {
+            _isSpawned = true;
+            lattice.SpawnStartSet();
+        }
     }
 
     public void RestartGame()
@@ -36,6 +43,11 @@ public class GameManager : MonoBehaviour
         _isGameStarted = false;
         gameCanvas.SetActive(false);
         menuManager.OpenMenu();
+    }
+
+    public void LooseGame()
+    {
+        Debug.Log("loose");
     }
 
     void OnSwipeTrack(Direction _direction)

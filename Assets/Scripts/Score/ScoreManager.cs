@@ -44,8 +44,10 @@ public class ScoreManager : MonoBehaviour
 
     void OnLoadData(SaveData _data)
     {
-        Score = _data.score;
         Record = _data.record;
+
+        if (_data.cells.Count != 0)
+            Score = _data.score;
     }
 
     void OnCrafted(CellType _cellType, int _level)
