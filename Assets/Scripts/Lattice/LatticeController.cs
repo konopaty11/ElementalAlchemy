@@ -50,24 +50,24 @@ public class LatticeController : MonoBehaviour
 
     public void SpawnStartSet()
     {
-        if (_saveCells.Count == 0)
-        {
-            foreach (CellType _type in generalConfig.StartCells)
-            {
-                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
-            }
-        }
-        else
-        {
-            foreach (SaveCellSerializable _cell in _saveCells)
-            {
-                if (_cell.type != CellType.None)
-                    SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
-            }
-        }
+        //if (_saveCells.Count == 0)
+        //{
+        //    foreach (CellType _type in generalConfig.StartCells)
+        //    {
+        //        SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (SaveCellSerializable _cell in _saveCells)
+        //    {
+        //        if (_cell.type != CellType.None)
+        //            SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
+        //    }
+        //}
 
-        //SpawnCellInPosition(CellType.Water, 1, new(4, 0));
-        //SpawnCellInPosition(CellType.Water, 1, new(4, 1));
+        SpawnCellInPosition(CellType.Storm, 1, new(4, 0));
+        SpawnCellInPosition(CellType.Volcano, 1, new(4, 1));
 
         //SpawnCellInPosition(CellType.Fire, 1, new(4, 2));
         //SpawnCellInPosition(CellType.Fire, 1, new(4, 3));
@@ -83,7 +83,7 @@ public class LatticeController : MonoBehaviour
             for (int _j = 0; _j < _cells.GetLength(1); _j++)
             {
                 if (_cells[_i, _j] != null)
-                    DestroyCell(new(_i, _j));
+                    DestroyCell(new(_i, _j), false);
             }
         }
 
@@ -96,8 +96,19 @@ public class LatticeController : MonoBehaviour
     public void SpawnCellInRandomPosition(CellType _cellType, int _level)
     {
         CellController _cell = SpawnCell(_cellType, _level);
+        Vector2Int _indices;
 
-        Vector2Int _indices = GetRandomAvailableCellIndices();
+        try
+        {
+            _indices = GetRandomAvailableCellIndices();
+        }
+        catch (UnityException)
+        {
+            cellPool.ReturnToPool(_cell.gameObject);
+            gameManager.LooseGame();
+            return;
+        }
+
         CellPosition(_cell, _indices);
     }
 
@@ -178,7 +189,7 @@ public class LatticeController : MonoBehaviour
                 break;
         }
 
-        AddCellsForSwipe();
+        /*StartCoroutine(*/AddCellsForSwipe()/*)*/;
 
         saves.SaveCells(_cells);
 
@@ -187,20 +198,15 @@ public class LatticeController : MonoBehaviour
 
     void AddCellsForSwipe()
     {
+        //yield return new WaitForSeconds(generalConfig.DurationCellMove);
+
         int _targetIndex = _lastAddedCellIndex + generalConfig.CountCellsToAdd;
         for (int i = _lastAddedCellIndex; i < _targetIndex; i++)
         {
             CellType _type = generalConfig.CellsToAdd[i %  generalConfig.CellsToAdd.Count];
 
-            try
-            {
-                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
-            }
-            catch (UnityException)
-            {
-                gameManager.LooseGame();
-                return;
-            }
+            SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+
         }
 
         _lastAddedCellIndex = _targetIndex;
@@ -236,7 +242,7 @@ public class LatticeController : MonoBehaviour
 
                 if (_cells[_i, _jAvailable] == null) continue;
 
-                MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices);
+                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _jAvailable++;
@@ -274,7 +280,7 @@ public class LatticeController : MonoBehaviour
 
                 if (_cells[_i, _jAvailable] == null) continue;
 
-                MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices);
+                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _jAvailable--;
@@ -312,7 +318,7 @@ public class LatticeController : MonoBehaviour
 
                 if (_cells[_iAvailable, _j] == null) continue;
 
-                MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices);
+                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _iAvailable++;
@@ -352,7 +358,7 @@ public class LatticeController : MonoBehaviour
 
                 if (_cells[_iAvailable, _j] == null) continue;
 
-                MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices);
+                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
 
                 if (!_isCrafted)
                     _iAvailable--;
@@ -376,23 +382,23 @@ public class LatticeController : MonoBehaviour
         _availableCoord++;
     }
 
-    void MoveSmoothCell(Transform _cell, Vector2Int _fromIndices, Vector2Int _toIndices)
+    IEnumerator MoveSmoothCell(Transform _cell, Vector2Int _fromIndices, Vector2Int _toIndices)
     {
         Vector3 _startPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_fromIndices);
         Vector3 _targetPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_toIndices);
 
         _cell.localPosition = _targetPosition;
 
-        //float _duration = generalConfig.DurationCellMove;
-        //float _elapsed = 0f;
-        //while (_elapsed < _duration)
-        //{
-        //    _elapsed += Time.deltaTime;
+        float _duration = generalConfig.DurationCellMove;
+        float _elapsed = 0f;
+        while (_elapsed < _duration)
+        {
+            _elapsed += Time.deltaTime;
 
-        //    _cell.localPosition = Vector3.Lerp(_startPosition, _targetPosition, _elapsed / _duration);
+            _cell.localPosition = Vector3.Lerp(_startPosition, _targetPosition, _elapsed / _duration);
 
-        //    yield return null;
-        //}
+            yield return null;
+        }
 
         //for (float t = 0; t <= 1; t += Time.deltaTime)
         //{
@@ -418,7 +424,7 @@ public class LatticeController : MonoBehaviour
             {
                 Craft(_craft, _cell1Indices, _cell2Indices);
 
-                Debug.Log($"{_cell1Indices} -- {_cell2Indices} ------ {_craft.resultCell.type}");
+                //Debug.Log($"{_cell1Indices} -- {_cell2Indices} ------ {_craft.resultCell.type}");
 
                 OnCrafted?.Invoke(_craft.resultCell.type, _craft.resultCell.level);
                 return true;
@@ -446,8 +452,8 @@ public class LatticeController : MonoBehaviour
         //StartCoroutine(DestroyCell(_cell1Indices));
         //yield return StartCoroutine(DestroyCell(_cell2Indices));
 
-        DestroyCell(_cell1Indices);
-        DestroyCell(_cell2Indices);
+        StartCoroutine(DestroyCell(_cell1Indices, true));
+        StartCoroutine(DestroyCell(_cell2Indices, true));
 
         //Debug.Log(_craft.resultCell.type);
 
@@ -534,14 +540,14 @@ public class LatticeController : MonoBehaviour
         gameManager.LooseGame();
     }
 
-    void DestroyCell(Vector2Int _cellIndices)
+    IEnumerator DestroyCell(Vector2Int _cellIndices, bool _delay)
     {
         GameObject _cellObject = _cells[_cellIndices.x, _cellIndices.y].gameObject;
         _cells[_cellIndices.x, _cellIndices.y] = null;
         saves.SaveCells(_cells);
 
-        //yield return new WaitForSeconds(generalConfig.DurationCellMove);
-
+        if (_delay)
+            yield return new WaitForSeconds(generalConfig.DurationCellMove);
         cellPool.ReturnToPool(_cellObject);
     }
 
