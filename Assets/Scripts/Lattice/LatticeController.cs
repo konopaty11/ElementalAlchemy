@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,7 +43,6 @@ public class LatticeController : MonoBehaviour
     
     void OnDataLoad(SaveData _data)
     {
-        Debug.Log(_data.cells.Count);
         _saveCells = _data.cells;
     }
 
@@ -65,15 +63,6 @@ public class LatticeController : MonoBehaviour
                     SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
             }
         }
-
-        //SpawnCellInPosition(CellType.Storm, 1, new(4, 0));
-        //SpawnCellInPosition(CellType.Volcano, 1, new(4, 1));
-
-        //SpawnCellInPosition(CellType.Fire, 1, new(4, 2));
-        //SpawnCellInPosition(CellType.Fire, 1, new(4, 3));
-
-        //SpawnCellInPosition(CellType.Fire, 1, new(4, 4));
-        //SpawnCellInPosition(CellType.Fire, 1, new(4, 5));
     }
 
     public void ClearCells()
@@ -120,7 +109,6 @@ public class LatticeController : MonoBehaviour
 
     CellController SpawnCell(CellType _cellType, int _level)
     {
-        //Debug.Log(_cellType);
         GameObject _cellObject = cellPool.SpawnByPool();
 
         CellController _cell = _cellObject.GetComponent<CellController>();
@@ -150,12 +138,6 @@ public class LatticeController : MonoBehaviour
 
             yield return null;
         }
-
-        //int _j = Random.Range(0, sizeLattice);
-        //int _i = Random.Range(0, sizeLattice);
-
-        //_cell.localPosition = offsetPosition + new Vector3(_j, _i);
-        //_cells[_cells.GetLength(0) - 1 - _i, _j] = _cell;
     }
 
     Vector2Int GetRandomAvailableCellIndices()
@@ -204,7 +186,7 @@ public class LatticeController : MonoBehaviour
                 break;
         }
 
-        /*StartCoroutine(*/AddCellsForSwipe()/*)*/;
+        AddCellsForSwipe();
 
         if (GameManager.IsLoose || GameManager.IsWin)
             saves.ResetCells();
@@ -216,8 +198,6 @@ public class LatticeController : MonoBehaviour
 
     void AddCellsForSwipe()
     {
-        //yield return new WaitForSeconds(generalConfig.DurationCellMove);
-
         int _targetIndex = _lastAddedCellIndex + generalConfig.CountCellsToAdd;
         for (int i = _lastAddedCellIndex; i < _targetIndex; i++)
         {
@@ -384,22 +364,6 @@ public class LatticeController : MonoBehaviour
         }
     }
 
-    void MoveCell(Transform _currentCell, Transform _availableCell, Vector2Int _newPosition, int _changeCoord, int _availableCoord)
-    {
-        if (_currentCell == null) return;
-
-        if (_availableCoord != _changeCoord)
-        {
-            Vector3Int _position = (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_newPosition);
-            _currentCell.localPosition = offsetPosition + _position;
-
-            _availableCell = _currentCell;
-            _currentCell = null;
-        }
-
-        _availableCoord++;
-    }
-
     IEnumerator MoveSmoothCell(Transform _cell, Vector2Int _fromIndices, Vector2Int _toIndices)
     {
         Vector3 _startPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_fromIndices);
@@ -434,15 +398,9 @@ public class LatticeController : MonoBehaviour
 
         foreach (CraftSerializable _craft in craftConfig.crafts)
         {
-            //Debug.Log($"{_craft.resultCell.type}" +
-            //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_1.level == _cell1.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_2.level == _cell2.Level}" +
-            //    $"{_craft.cell_1.type == _cell1.CellType && _craft.cell_2.level == _cell2.Level && _craft.cell_2.type == _cell2.CellType && _craft.cell_1.level == _cell1.Level}");
-
             if (CanCraft(_craft, _cell1, _cell2))
             {
                 Craft(_craft, _cell1Indices, _cell2Indices);
-
-                //Debug.Log($"{_cell1Indices} -- {_cell2Indices} ------ {_craft.resultCell.type}");
 
                 OnCrafted?.Invoke(_craft.resultCell.type, _craft.resultCell.level);
                 return true;
@@ -465,15 +423,8 @@ public class LatticeController : MonoBehaviour
 
     void Craft(CraftSerializable _craft, Vector2Int _cell1Indices, Vector2Int _cell2Indices)
     {
-        //Debug.Log($"{_cells[_cell1Indices.x, _cell1Indices.y]} --- {_cells[_cell2Indices.x, _cell2Indices.y]}");
-
-        //StartCoroutine(DestroyCell(_cell1Indices));
-        //yield return StartCoroutine(DestroyCell(_cell2Indices));
-
         StartCoroutine(DestroyCell(_cell1Indices, true));
         StartCoroutine(DestroyCell(_cell2Indices, true));
-
-        //Debug.Log(_craft.resultCell.type);
 
         SpawnCellInPosition(_craft.resultCell.type, _craft.resultCell.level, _cell1Indices);
     }

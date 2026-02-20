@@ -10,12 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] Saves saves;
     [SerializeField] GeneralConfig generalConfig;
 
-    bool _isGameStarted;
-    bool _isSpawned = false;
-    public static bool IsLoose;
-    public static bool IsWin;
+    public static bool IsGameStarted {  get; private set; }
+    public static bool IsLoose { get; private set; }
+    public static bool IsWin { get; private set; }
 
     float _swipeTime = 0f;
+    bool _isSpawned = false;
 
     void OnEnable()
     {
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        _isGameStarted = true;
+        IsGameStarted = true;
         gameCanvas.SetActive(true);
 
         if (!_isSpawned)
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         if (IsLoose || IsWin)
             RestartGame();
 
-        _isGameStarted = false;
+        IsGameStarted = false;
         gameCanvas.SetActive(false);
         menuManager.OpenMenu();
     }

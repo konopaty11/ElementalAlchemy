@@ -7,6 +7,11 @@ public class GeneralConfig : ScriptableObject
     [Header("Input")]
     [SerializeField] float minSwipeLenght = 400f;
 
+    [Header("Logo")]
+    public float minDelayBetweenMovements = 1f;
+    public float maxDelayBetweenMovements = 3f;
+    public float durationMovement = 0.1f;
+
     [Header("Cells")]
     [SerializeField] float durationCellMove = 0.1f;
     [SerializeField] float durationCellShow = 0.2f;

@@ -143,10 +143,10 @@ TextureImporter:
       name: MountingArea_0
       rect:
         serializedVersion: 2
-        x: 125
+        x: 127
         y: 700
         width: 156
-        height: 229
+        height: 225
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,10 +187,10 @@ TextureImporter:
       name: MountingArea_2
       rect:
         serializedVersion: 2
-        x: 712
+        x: 711
         y: 713
-        width: 214
-        height: 198
+        width: 213
+        height: 195
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -256,7 +256,7 @@ TextureImporter:
         x: 704
         y: 397
         width: 226
-        height: 210
+        height: 207
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -275,10 +275,10 @@ TextureImporter:
       name: MountingArea_7
       rect:
         serializedVersion: 2
-        x: 96
-        y: 103
-        width: 218
-        height: 196
+        x: 94
+        y: 102
+        width: 220
+        height: 197
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -341,7 +341,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fd200d7f4f59ba041b47081f2fd1a4e6
+    spriteID: f4c6940038615a941ae3c4c5052bbc07
     internalID: 0
     vertices: []
     indices: 

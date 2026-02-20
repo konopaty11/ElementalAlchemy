@@ -68,7 +68,6 @@ public class Saves : MonoBehaviour
             }
 
         _data.cells = _cells;
-        Debug.Log(_data.cells.Count);
 
         SaveData();
     }
@@ -76,7 +75,6 @@ public class Saves : MonoBehaviour
     public void ResetCells()
     {
         _data.cells = new();
-        Debug.Log(_data.cells.Count);
         SaveData();
     }
 
