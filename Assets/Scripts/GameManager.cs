@@ -7,11 +7,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject gameCanvas;
     [SerializeField] LatticeController lattice;
     [SerializeField] ResultWindowController resultWindow;
+    [SerializeField] Saves saves;
+    [SerializeField] GeneralConfig generalConfig;
 
     bool _isGameStarted;
     bool _isSpawned = false;
-    bool _isLoose;
-    bool _isWin;
+    public static bool IsLoose;
+    public static bool IsWin;
+
+    float _swipeTime = 0f;
 
     void OnEnable()
     {
@@ -23,6 +27,16 @@ public class GameManager : MonoBehaviour
     {
         InputSwipe.OnSwipeTrack -= OnSwipeTrack;
         LatticeController.OnCrafted -= OnCrafted;
+    }
+
+    void Update()
+    {
+        SwipeTimer();
+    }
+
+    void SwipeTimer()
+    {
+        _swipeTime += Time.deltaTime;
     }
 
     public void StartGame()
@@ -39,8 +53,8 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        _isWin = false;
-        _isLoose = false;
+        IsWin = false;
+        IsLoose = false;
         resultWindow.ResetWindow();
 
         lattice.ClearCells();
@@ -48,7 +62,7 @@ public class GameManager : MonoBehaviour
 
     public void ToMenu()
     {
-        if (_isLoose || _isWin)
+        if (IsLoose || IsWin)
             RestartGame();
 
         _isGameStarted = false;
@@ -58,13 +72,17 @@ public class GameManager : MonoBehaviour
 
     public void LooseGame()
     {
-        _isLoose = true;
+        if (IsLoose) return;
+
+        IsLoose = true;
         resultWindow.Loose();
     }
 
     public void WinGame()
     {
-        _isWin = true;
+        if (IsWin) return;
+
+        IsWin = true;
         resultWindow.Win();
     }
 
@@ -76,8 +94,9 @@ public class GameManager : MonoBehaviour
 
     void OnSwipeTrack(Direction _direction)
     {
-        if (_isLoose || _isWin) return;
+        if (IsLoose || IsWin || _swipeTime < generalConfig.SwipeDelay) return;
 
+        _swipeTime = 0f;
         lattice.SwipeHandle(_direction);
     }
 }

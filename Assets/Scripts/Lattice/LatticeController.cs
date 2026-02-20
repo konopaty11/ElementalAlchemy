@@ -50,24 +50,24 @@ public class LatticeController : MonoBehaviour
 
     public void SpawnStartSet()
     {
-        //if (_saveCells.Count == 0)
-        //{
-        //    foreach (CellType _type in generalConfig.StartCells)
-        //    {
-        //        SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
-        //    }
-        //}
-        //else
-        //{
-        //    foreach (SaveCellSerializable _cell in _saveCells)
-        //    {
-        //        if (_cell.type != CellType.None)
-        //            SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
-        //    }
-        //}
+        if (_saveCells.Count == 0)
+        {
+            foreach (CellType _type in generalConfig.StartCells)
+            {
+                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+            }
+        }
+        else
+        {
+            foreach (SaveCellSerializable _cell in _saveCells)
+            {
+                if (_cell.type != CellType.None)
+                    SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
+            }
+        }
 
-        SpawnCellInPosition(CellType.Storm, 1, new(4, 0));
-        SpawnCellInPosition(CellType.Volcano, 1, new(4, 1));
+        //SpawnCellInPosition(CellType.Storm, 1, new(4, 0));
+        //SpawnCellInPosition(CellType.Volcano, 1, new(4, 1));
 
         //SpawnCellInPosition(CellType.Fire, 1, new(4, 2));
         //SpawnCellInPosition(CellType.Fire, 1, new(4, 3));
@@ -83,7 +83,7 @@ public class LatticeController : MonoBehaviour
             for (int _j = 0; _j < _cells.GetLength(1); _j++)
             {
                 if (_cells[_i, _j] != null)
-                    DestroyCell(new(_i, _j), false);
+                    StartCoroutine(DestroyCell(new(_i, _j), false));
             }
         }
 
@@ -109,13 +109,13 @@ public class LatticeController : MonoBehaviour
             return;
         }
 
-        CellPosition(_cell, _indices);
+        StartCoroutine(CellPosition(_cell, _indices));
     }
 
     public void SpawnCellInPosition(CellType _cellType, int _level, Vector2Int _indices)
     {
         CellController _cell = SpawnCell(_cellType, _level);
-        CellPosition(_cell, _indices);
+        StartCoroutine(CellPosition(_cell, _indices));
     }
 
     CellController SpawnCell(CellType _cellType, int _level)
@@ -129,12 +129,27 @@ public class LatticeController : MonoBehaviour
         return _cell;
     }
 
-    void CellPosition(CellController _cellToPlace, Vector2Int _indices)
+    IEnumerator CellPosition(CellController _cellToPlace, Vector2Int _indices)
     {
         _cells[_indices.x, _indices.y] = _cellToPlace;
         _cellToPlace.transform.localPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_indices);
 
         saves.SaveCells(_cells);
+
+        Vector3 _startScale = Vector3.zero;
+        Vector3 _targetScale = Vector3.one;
+        Transform _cellTransform = _cellToPlace.transform;
+
+        float _elapsed = 0f;
+        float _duration = generalConfig.DurationCellShow;
+        while (_elapsed < _duration)
+        {
+            _elapsed += Time.deltaTime;
+
+            _cellTransform.localScale = Vector3.Lerp(_startScale, _targetScale, _elapsed / _duration);
+
+            yield return null;
+        }
 
         //int _j = Random.Range(0, sizeLattice);
         //int _i = Random.Range(0, sizeLattice);
@@ -191,7 +206,10 @@ public class LatticeController : MonoBehaviour
 
         /*StartCoroutine(*/AddCellsForSwipe()/*)*/;
 
-        saves.SaveCells(_cells);
+        if (GameManager.IsLoose || GameManager.IsWin)
+            saves.ResetCells();
+        else
+            saves.SaveCells(_cells);
 
         CheckLattice();
     }
