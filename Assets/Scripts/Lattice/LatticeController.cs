@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class LatticeController : MonoBehaviour
     List<SaveCellSerializable> _saveCells;
 
     int _lastAddedCellIndex;
+    Sequence _sequence;
 
     void OnEnable()
     {
@@ -48,21 +50,24 @@ public class LatticeController : MonoBehaviour
 
     public void SpawnStartSet()
     {
-        if (_saveCells.Count == 0)
-        {
-            foreach (CellType _type in generalConfig.StartCells)
-            {
-                SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
-            }
-        }
-        else
-        {
-            foreach (SaveCellSerializable _cell in _saveCells)
-            {
-                if (_cell.type != CellType.None)
-                    SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
-            }
-        }
+        //if (_saveCells.Count == 0)
+        //{
+        //    foreach (CellType _type in generalConfig.StartCells)
+        //    {
+        //        SpawnCellInRandomPosition(_type, generalConfig.StartLevel);
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (SaveCellSerializable _cell in _saveCells)
+        //    {
+        //        if (_cell.type != CellType.None)
+        //            SpawnCellInPosition(_cell.type, _cell.level, _cell.indices);
+        //    }
+        //}
+
+        SpawnCellInPosition(CellType.Air, 1, new(0, 0));
+        SpawnCellInPosition(CellType.Air, 1, new(5, 0));
     }
 
     public void ClearCells()
@@ -132,9 +137,12 @@ public class LatticeController : MonoBehaviour
         float _duration = generalConfig.DurationCellShow;
         while (_elapsed < _duration)
         {
-            _elapsed += Time.deltaTime;
+            _elapsed += Time.unscaledDeltaTime;
 
-            _cellTransform.localScale = Vector3.Lerp(_startScale, _targetScale, _elapsed / _duration);
+            float _progress = _elapsed / _duration;
+            float _t = Mathf.SmoothStep(0, 1, _progress);
+
+            _cellTransform.localScale = Vector3.LerpUnclamped(_startScale, _targetScale, _t);
 
             yield return null;
         }
@@ -170,6 +178,11 @@ public class LatticeController : MonoBehaviour
 
     public void SwipeHandle(Direction _direction)
     {
+        if (_sequence != null && _sequence.IsActive())
+            _sequence.Kill();
+
+        _sequence = DOTween.Sequence();
+
         switch (_direction)
         {
             case Direction.Left:
@@ -232,15 +245,15 @@ public class LatticeController : MonoBehaviour
                     _cells[_i, _j] = null;
                 }
 
+                Transform _availableCell = _cells[_i, _jAvailable].transform;
+
                 if (_jAvailable != _jStartValue)
                     _isCrafted = CheckCraft(new(_i, _jAvailable - 1), new(_i, _jAvailable));
 
                 if (_isCrafted)
                     _targetIndices = new(_i, _jAvailable - 1);
 
-                if (_cells[_i, _jAvailable] == null) continue;
-
-                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
+                MoveSmoothCell(_availableCell, _j, _targetIndices);
 
                 if (!_isCrafted)
                     _jAvailable++;
@@ -270,15 +283,15 @@ public class LatticeController : MonoBehaviour
                     _cells[_i, _j] = null;
                 }
 
+                Transform _availableCell = _cells[_i, _jAvailable].transform;
+
                 if (_jAvailable != _jStartValue)
                     _isCrafted = CheckCraft(new(_i, _jAvailable + 1), new(_i, _jAvailable));
 
                 if (_isCrafted)
                     _targetIndices = new(_i, _jAvailable + 1);
 
-                if (_cells[_i, _jAvailable] == null) continue;
-
-                StartCoroutine(MoveSmoothCell(_cells[_i, _jAvailable].transform, new(_i, _j), _targetIndices));
+                MoveSmoothCell(_availableCell, _jStartValue - _j, _targetIndices);
 
                 if (!_isCrafted)
                     _jAvailable--;
@@ -308,15 +321,15 @@ public class LatticeController : MonoBehaviour
                     _cells[_i, _j] = null;
                 }
 
+                Transform _availableCell = _cells[_iAvailable, _j].transform;
+
                 if (_iAvailable != _iStartValue)
                     _isCrafted = CheckCraft(new(_iAvailable - 1, _j), new(_iAvailable, _j));
 
                 if (_isCrafted)
                     _targetIndices = new(_iAvailable - 1, _j);
 
-                if (_cells[_iAvailable, _j] == null) continue;
-
-                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
+                MoveSmoothCell(_availableCell, _i, _targetIndices);
 
                 if (!_isCrafted)
                     _iAvailable++;
@@ -346,6 +359,8 @@ public class LatticeController : MonoBehaviour
                     _cells[_i, _j] = null;
                 }
 
+                Transform _availableCell = _cells[_iAvailable, _j].transform;
+
                 if (_iAvailable != _iStartValue)
                 {
                     _isCrafted = CheckCraft(new(_iAvailable + 1, _j), new(_iAvailable, _j));
@@ -354,9 +369,7 @@ public class LatticeController : MonoBehaviour
                 if (_isCrafted)
                     _targetIndices = new(_iAvailable + 1, _j);
 
-                if (_cells[_iAvailable, _j] == null) continue;
-
-                StartCoroutine(MoveSmoothCell(_cells[_iAvailable, _j].transform, new(_i, _j), _targetIndices));
+                MoveSmoothCell(_availableCell, _iStartValue - _i, _targetIndices);
 
                 if (!_isCrafted)
                     _iAvailable--;
@@ -364,23 +377,29 @@ public class LatticeController : MonoBehaviour
         }
     }
 
-    IEnumerator MoveSmoothCell(Transform _cell, Vector2Int _fromIndices, Vector2Int _toIndices)
+    void MoveSmoothCell(Transform _cell, int _delayFactor, Vector2Int _toIndices)
     {
-        Vector3 _startPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_fromIndices);
+        //Vector3 _startPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_fromIndices);
         Vector3 _targetPosition = offsetPosition + (Vector3Int)ConvertVector2BetweenCoordsAndIndices(_toIndices);
 
-        _cell.localPosition = _targetPosition;
+        _cell.DOLocalMove(_targetPosition, generalConfig.DurationCellMove)
+            .SetEase(Ease.OutQuad);
 
-        float _duration = generalConfig.DurationCellMove;
-        float _elapsed = 0f;
-        while (_elapsed < _duration)
-        {
-            _elapsed += Time.deltaTime;
+        //_cell.localPosition = _targetPosition;
 
-            _cell.localPosition = Vector3.Lerp(_startPosition, _targetPosition, _elapsed / _duration);
+        //float _duration = generalConfig.DurationCellMove;
+        //float _elapsed = 0f;
+        //while (_elapsed < _duration)
+        //{
+        //    _elapsed += Time.unscaledDeltaTime;
 
-            yield return null;
-        }
+        //    float _progress = _elapsed / _duration;
+        //    float _t = Mathf.SmoothStep(0, 1, _progress);
+
+        //    _cell.localPosition = Vector3.LerpUnclamped(_startPosition, _targetPosition, _t);
+
+        //    yield return null;
+        //}
 
         //for (float t = 0; t <= 1; t += Time.deltaTime)
         //{
@@ -517,6 +536,7 @@ public class LatticeController : MonoBehaviour
 
         if (_delay)
             yield return new WaitForSeconds(generalConfig.DurationCellMove);
+
         cellPool.ReturnToPool(_cellObject);
     }
 

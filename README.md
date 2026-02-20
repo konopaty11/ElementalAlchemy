@@ -1,6 +1,6 @@
 <div align="center"> <h1>🧪 Elemental Alchemy</h1> 
 </div><table style="margin-left: auto; margin-right: auto; width: 100%; border: none;"> <tr> <td style="text-align: center; width: 30%; border: none;"> 
-<img src="README/logo.png" alt="Логотип Elemental Alchemy" width="400"> 
+<img src="README/Logo.png" alt="Логотип Elemental Alchemy" width="400"> 
 </td> <td style="text-align: left; vertical-align: middle; width: 70%; border: none;"> <strong>Elemental Alchemy</strong> — это увлекательная головоломка в жанре "три в ряд" с элементами алхимии. Соединяйте четыре базовые стихии — Огонь, Воду, Землю и Воздух — чтобы создавать новые элементы и в итоге призвать могущественного Дракона. Создано на Unity 6.3 под Android. </td> </tr> </table><div align="center"> </div><div align="left"> <h1>🔥 Геймплей</h1> </div>
 Начинайте с четырёх базовых стихий: Огонь 🔥, Вода 💧, Земля 🌱 и Воздух 💨. Соединяйте одинаковые элементы, чтобы повышать их уровень.
 
